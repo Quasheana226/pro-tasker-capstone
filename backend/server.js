@@ -19,7 +19,7 @@ app.use(cors());
 app.use(express.json());
 
 //Routes
-app.use('/api/tasks', require('./routes/taskRoutes'));
+// app.use('/api/tasks', require('./routes/taskRoutes'));
 app.use('/api/auth', require('./routes/authRoutes'));
 
 app.get('/', (req, res) => res.json({ message: 'Welcome to the Pro Tasker API' }));
