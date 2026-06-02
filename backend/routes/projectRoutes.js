@@ -6,7 +6,7 @@ const { protect } = require('../middleware/authMiddleware');
 const {
     getProjects,
     createProject,
-    getProjectsById,
+    getProjectById,
     updateProject,
     deleteProject,
 
@@ -16,6 +16,6 @@ const {
 //All peoject routes are protected must be logged in
 
 router.route('/').get(protect, getProjects).post(protect, createProject);
-router.route('/:id').get(protect, getProjectsById).put(protect, updateProject).delete(protect, deleteProject);
+router.route('/:id').get(protect, getProjectById).put(protect, updateProject).delete(protect, deleteProject);
 
 module.exports = router;

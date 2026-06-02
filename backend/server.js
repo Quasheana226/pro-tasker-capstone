@@ -19,8 +19,9 @@ app.use(cors());
 app.use(express.json());
 
 //Routes
-// app.use('/api/tasks', require('./routes/taskRoutes'));
 app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/projects', require('./routes/projectRoutes'));
+app.use('/api/projects/:projectId/tasks', require('./routes/taskRoutes')); // nested task routes under projects
 
 app.get('/', (req, res) => res.json({ message: 'Welcome to the Pro Tasker API' }));
 
