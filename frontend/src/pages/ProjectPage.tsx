@@ -1,6 +1,7 @@
 import { useState, useEffect, type SyntheticEvent } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import api from "../utils/api";
+import Navbar from "../components/Navbar";
 
 interface Project {
     _id: string;
@@ -29,8 +30,7 @@ const COLUMNS: { label: Task["status"]; color: string; dot: string }[] = [
 const ProjectPage = () => {
     // Get projectId from URL params
     const { projectId: id } = useParams();// New state to hold project details
-    const navigate = useNavigate();//   New state to hold tasks for this project
-    const [project, setProject] = useState<Project | null>(null);// New state to hold project details
+const [project, setProject] = useState<Project | null>(null);// New state to hold project details
     const [tasks, setTasks] = useState<Task[]>([]);// New state to hold tasks for this project
     const [loading, setLoading] = useState(true);// New loading state
     const [error, setError] = useState("");// New state for error handling
@@ -88,6 +88,15 @@ const ProjectPage = () => {
         }
     };
 
+    const handleDeleteTask = async (taskId: string) => {
+        try {
+            await api.delete(`/projects/${id}/tasks/${taskId}`);
+            setTasks(tasks.filter(task => task._id !== taskId));
+        } catch (err: any) {
+            setError('Failed to delete task');
+        }
+    };
+
     if (loading) return (
         <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center text-white/40 text-sm">
             Loading...
@@ -104,34 +113,7 @@ const ProjectPage = () => {
 
     return (
         <div className="min-h-screen bg-[#0a0a0f] text-white flex flex-col">
-            {/* Navbar */}
-            <nav className="border-b border-white/10 px-6 py-4 flex items-center justify-between shrink-0">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center">
-                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
-                    </div>
-                    <span className="font-bold text-lg">Forge</span>
-                </div>
-
-                {/* Project title in the center of the navbar */}
-                <div className="absolute left-1/2 -translate-x-1/2 text-center hidden sm:block">
-                    <p className="font-semibold text-white">{project?.name}</p>
-                    {project?.description && (
-                        <p className="text-white/30 text-xs">{project.description}</p>
-                    )}
-                </div>
-
-                <button
-                    onClick={() => navigate('/dashboard')}
-                    className="text-sm text-white/40 hover:text-white transition"
-                >
-                
-                    &larr; Dashboard 
-                </button>
-            </nav>
+            <Navbar showBack title={project?.name} subtitle={project?.description} />
 
             {/* Board */}
             <div className="flex-1 overflow-x-auto px-6 py-8">
@@ -176,17 +158,32 @@ const ProjectPage = () => {
                                             {task.description && (
                                                 <p className="text-xs text-white/40 mt-1 leading-relaxed">{task.description}</p>
                                             )}
-                                            {/* Move-to buttons — shown on hover */}
-                                            <div className="mt-3 flex gap-1 flex-wrap opacity-0 group-hover:opacity-100 transition">
-                                                {COLUMNS.filter(c => c.label !== task.status).map(c => (
+                                            {/* Actions — shown on hover */}
+                                            <div className="mt-3 flex gap-1 items-center opacity-0 group-hover:opacity-100 transition">
+                                                {task.status === "To Do" && (
                                                     <button
-                                                        key={c.label}
-                                                        onClick={() => handleStatusChange(task._id, c.label)}
+                                                        onClick={() => handleStatusChange(task._id, "In Progress")}
                                                         className="text-[10px] text-white/40 hover:text-white border border-white/10 hover:border-white/30 rounded-md px-2 py-0.5 transition"
                                                     >
-                                                        → {c.label}
+                                                        → In Progress
                                                     </button>
-                                                ))}
+                                                )}
+                                                {task.status === "In Progress" && (
+                                                    <button
+                                                        onClick={() => handleStatusChange(task._id, "Done")}
+                                                        className="text-[10px] text-white/40 hover:text-white border border-white/10 hover:border-white/30 rounded-md px-2 py-0.5 transition"
+                                                    >
+                                                        → Done
+                                                    </button>
+                                                )}
+                                                {task.status !== "To Do" && (
+                                                    <button
+                                                        onClick={() => handleDeleteTask(task._id)}
+                                                        className="text-[10px] text-red-400/50 hover:text-red-400 border border-red-500/10 hover:border-red-500/40 rounded-md px-2 py-0.5 transition ml-auto"
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     ))}

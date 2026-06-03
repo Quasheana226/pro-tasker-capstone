@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useState, useEffect, useRef, type MouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
+import Navbar from "../components/Navbar";
 
 // Define the shape of a project object
 interface Project {
@@ -12,9 +12,39 @@ interface Project {
     updatedAt: string;
 }
 
-// Placeholder for dashboard page
+const TiltCard = ({ onClick, children }: { onClick: () => void; children: React.ReactNode }) => {
+    const ref = useRef<HTMLDivElement>(null);
+
+    const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+        const card = ref.current;
+        if (!card) return;
+        const { left, top, width, height } = card.getBoundingClientRect();
+        const x = (e.clientX - left) / width - 0.5;
+        const y = (e.clientY - top) / height - 0.5;
+        card.style.transform = `perspective(600px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) scale(1.02)`;
+    };
+
+    const handleMouseLeave = () => {
+        const card = ref.current;
+        if (!card) return;
+        card.style.transform = "perspective(600px) rotateY(0deg) rotateX(0deg) scale(1)";
+    };
+
+    return (
+        <div
+            ref={ref}
+            onClick={onClick}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={{ transition: "transform 0.15s ease, border-color 0.2s ease" }}
+            className="bg-white/5 border border-white/10 rounded-2xl p-5 cursor-pointer hover:border-violet-500/50 hover:bg-white/[0.08] min-h-[180px] flex flex-col justify-between group will-change-transform"
+        >
+            {children}
+        </div>
+    );
+};
+
 const DashboardPage = () => {
-    const { user, logout } = useAuth(); // Get current user and logout function from auth context
     const navigate = useNavigate(); // Get navigate function for redirection
     const [projects, setProjects] = useState<Project[]>([]); // State to hold list of projects
     const [loading, setLoading] = useState(true); //  State to track loading status of projects
@@ -65,43 +95,9 @@ const DashboardPage = () => {
         }
     };
 
-    const handleLogout = () => {
-        logout(); // Call logout function from context to clear user data
-        navigate("/login"); // Redirect to login page after logout
-    };
-
-    return (
+return (
         <div className="min-h-screen bg-[#0a0a0f] text-white">
-            {/* Navbar */}
-            <nav className="border-b border-white/10 px-6 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center">
-                        <svg
-                            className="w-4 h-4 text-white"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                            />
-                        </svg>
-                    </div>
-                    <span className="font-bold text-lg">Forge</span>
-                </div>
-                <div className="flex items-center gap-4">
-                    <span className="text-sm text-white/40">Hey, {user?.name} 👋</span>
-                    <button
-                        onClick={handleLogout}
-                        className="text-sm text-white/40 hover:text-white transition"
-                    >
-                        Logout
-                    </button>
-                </div>
-            </nav>
+            <Navbar />
 
             {/* Main content */}
             <div className="max-w-5xl mx-auto px-6 py-10">
@@ -186,10 +182,9 @@ const DashboardPage = () => {
                 {/* Projects grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {projects.map((project) => (
-                        <div
+                        <TiltCard
                             key={project._id}
                             onClick={() => navigate(`/projects/${project._id}`)}
-                            className="bg-white/5 border border-white/10 rounded-2xl p-5 cursor-pointer hover:border-violet-500/50 hover:bg-white/8 transition group min-h-[180px] flex flex-col justify-between"
                         >
                             <div className="flex items-center justify-between mb-3">
                                 <div className="w-10 h-10 rounded-xl bg-violet-600/20 flex items-center justify-center">
@@ -225,7 +220,7 @@ const DashboardPage = () => {
                             <p className="text-white/20 text-xs mt-3">
                                 {new Date(project.createdAt).toLocaleDateString()}
                             </p>
-                        </div>
+                        </TiltCard>
                     ))}
                 </div>
             </div>
