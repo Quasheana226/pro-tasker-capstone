@@ -56,6 +56,15 @@ const DashboardPage = () => {
             setCreating(false); // Set creating to false once API call is complete
         }
     };
+    const handleDeleteProject = async (projectId: string) => {
+        try {
+            await api.delete(`/projects/${projectId}`);
+            setProjects(projects.filter(p => p._id !== projectId));
+        } catch (err: any) {
+            setError("Failed to delete project");
+        }
+    };
+
     const handleLogout = () => {
         logout(); // Call logout function from context to clear user data
         navigate("/login"); // Redirect to login page after logout
@@ -180,12 +189,12 @@ const DashboardPage = () => {
                         <div
                             key={project._id}
                             onClick={() => navigate(`/projects/${project._id}`)}
-                            className="bg-white/5 border border-white/10 rounded-2xl p-5 cursor-pointer hover:border-violet-500/50 hover:bg-white/8 transition group"
+                            className="bg-white/5 border border-white/10 rounded-2xl p-5 cursor-pointer hover:border-violet-500/50 hover:bg-white/8 transition group min-h-[180px] flex flex-col justify-between"
                         >
-                            <div className="flex items-start justify-between mb-3">
-                                <div className="w-8 h-8 rounded-lg bg-violet-600/20 flex items-center justify-center">
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="w-10 h-10 rounded-xl bg-violet-600/20 flex items-center justify-center">
                                     <svg
-                                        className="w-4 h-4 text-violet-400"
+                                        className="w-5 h-5 text-violet-400"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -198,19 +207,16 @@ const DashboardPage = () => {
                                         />
                                     </svg>
                                 </div>
-                                <svg
-                                    className="w-4 h-4 text-white/20 group-hover:text-violet-400 transition"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
+                                <button
+                                    onClick={e => { e.stopPropagation(); handleDeleteProject(project._id); }}
+                                    className="opacity-0 group-hover:opacity-100 text-white/20 hover:text-red-400 transition"
+                                    title="Delete project"
                                 >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M9 5l7 7-7 7"
-                                    />
-                                </svg>
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
                             </div>
                             <h3 className="font-semibold text-white mb-1">{project.name}</h3>
                             <p className="text-white/40 text-xs line-clamp-2">
