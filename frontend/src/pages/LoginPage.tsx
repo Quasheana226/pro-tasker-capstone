@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, SyntheticEvent } from 'react'; // SyntheticEvent is React's wrapper around native browser events
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
@@ -13,7 +13,7 @@ const LoginPage = () => {
 
 
 
-    const handleSubmit = async (e: FormEvent) => {
+    const handleSubmit = async (e: SyntheticEvent<HTMLFormElement>) => { // SyntheticEvent<HTMLFormElement> = a submit event coming from a <form> element
         e.preventDefault();
         setError('');
         setLoading(true);
@@ -44,7 +44,7 @@ const LoginPage = () => {
                         </svg>
                     </div>
                     <h1 className="text-2xl font-bold text-white">Welcome back 👋</h1>
-                    <p className="text-sm text-white/40 mt-1">Sign in to your Pro-Tasker account</p>
+                    <p className="text-sm text-white/40 mt-1">Sign in to your Forge account</p>
                 </div>
                 {/* Error message */}
                 {error && (
@@ -55,9 +55,12 @@ const LoginPage = () => {
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm text-white/60 mb-1.5">Email</label>
+                        <label htmlFor="email" className="block text-sm text-white/60 mb-1.5">Email</label>
                         <input
+                            id="email"
+                            name="email"
                             type="email"
+                            autoComplete="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="you@example.com"
@@ -67,12 +70,15 @@ const LoginPage = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm text-white/60 mb-1.5">Password</label>
+                        <label htmlFor="password" className="block text-sm text-white/60 mb-1.5">Password</label>
                         <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="*******"
+                            id="password" // added id for better accessibility
+                            name="password"//backend expects a "password" field, so we need to name it that
+                            type="password" // hide input for passwords
+                            autoComplete="current-password" // helps browsers know this is a password field for autofill purposes
+                            value={password} // bind input value to password state
+                            onChange={(e) => setPassword(e.target.value)} // update password state as user types
+                            placeholder="*******" // placeholder text for password field
                             required
                             className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition"
                         />
