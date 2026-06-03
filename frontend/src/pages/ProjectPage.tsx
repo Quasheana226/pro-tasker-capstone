@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import api from "../utils/api";
 import Navbar from "../components/Navbar";
 import TaskCard, { type Task } from "../components/TaskCard";
+import useTasks from "../hooks/useTasks";
 
 interface Project {
     _id: string;
@@ -13,80 +14,50 @@ interface Project {
 }
 
 const COLUMNS: { label: Task["status"]; color: string; dot: string }[] = [
-    { label: "To Do",      color: "border-white/10",       dot: "bg-white/30" },
-    { label: "In Progress", color: "border-violet-500/40", dot: "bg-violet-400" },
-    { label: "Done",        color: "border-emerald-500/40", dot: "bg-emerald-400" },
+    { label: "To Do",       color: "border-white/10",        dot: "bg-white/30" },
+    { label: "In Progress", color: "border-violet-500/40",   dot: "bg-violet-400" },
+    { label: "Done",        color: "border-emerald-500/40",  dot: "bg-emerald-400" },
 ];
 
 const ProjectPage = () => {
-    // Get projectId from URL params
-    const { projectId: id } = useParams();// New state to hold project details
-const [project, setProject] = useState<Project | null>(null);// New state to hold project details
-    const [tasks, setTasks] = useState<Task[]>([]);// New state to hold tasks for this project
-    const [loading, setLoading] = useState(true);// New loading state
-    const [error, setError] = useState("");// New state for error handling
-    // Which column's inline form is open (null = none)
+    const { projectId: id } = useParams();
+    const [project, setProject] = useState<Project | null>(null);
+    const [projectLoading, setProjectLoading] = useState(true);
+    const [projectError, setProjectError] = useState("");
+
     const [addingTo, setAddingTo] = useState<Task["status"] | null>(null);
-    const [title, setTitle] = useState("");// New state for new task title
+    const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [creating, setCreating] = useState(false);
 
+    const { tasks, loading: tasksLoading, error: tasksError, createTask, updateTaskStatus, deleteTask } = useTasks(id);
+
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchProject = async () => {
             try {
-                const [projectRes, tasksRes] = await Promise.all([
-                    api.get(`/projects/${id}`), // Fetch project details
-                    api.get(`/projects/${id}/tasks`) // Fetch tasks for this project
-                ]);
-                setProject(projectRes.data);
-                setTasks(tasksRes.data);
+                const { data } = await api.get(`/projects/${id}`);
+                setProject(data);
             } catch (err: any) {
-                setError(err.response?.data?.message || 'Failed to load project');
+                setProjectError(err.response?.data?.message || "Failed to load project");
             } finally {
-                setLoading(false);
+                setProjectLoading(false);
             }
         };
-        fetchData();
+        fetchProject();
     }, [id]);
 
-    // Handler for creating a new task
     const handleCreateTask = async (e: SyntheticEvent, status: Task["status"]) => {
         e.preventDefault();
         setCreating(true);
-        try {
-            const { data } = await api.post(`/projects/${id}/tasks`, {
-                title,
-                description,
-                status, // New tasks start in the column they were added to
-            });
-            setTasks([...tasks, data]);
-            setTitle(''); // Clear form
-            setDescription('');
-            setAddingTo(null); // Hide form after creation
-        } catch (err: any) {
-            setError('Failed to create task');
-        } finally {
-            setCreating(false);
-        }
+        await createTask(title, description, status);
+        setTitle("");
+        setDescription("");
+        setAddingTo(null);
+        setCreating(false);
     };
 
-    const handleStatusChange = async (taskId: string, newStatus: Task["status"]) => {
-        try {
-            await api.put(`/projects/${id}/tasks/${taskId}`, { status: newStatus });
-            setTasks(tasks.map(task => task._id === taskId ? { ...task, status: newStatus } : task));
-        } catch (err: any) {
-            setError('Failed to update task status');
-        }
-    };
-
-    const handleDeleteTask = async (taskId: string) => {
-        try {
-            await api.delete(`/projects/${id}/tasks/${taskId}`);
-            setTasks(tasks.filter(task => task._id !== taskId));
-        } catch (err: any) {
-            setError('Failed to delete task');
-        }
-    };
+    const loading = projectLoading || tasksLoading;
+    const error = projectError || tasksError;
 
     if (loading) return (
         <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center text-white/40 text-sm">
@@ -108,7 +79,7 @@ const [project, setProject] = useState<Project | null>(null);// New state to hol
 
             {/* Board */}
             <div className="flex-1 overflow-x-auto px-6 py-8">
-                <div className="flex gap-4 h-full min-w-max">
+                <div className="flex gap-4 h-full min-w-max mx-auto w-fit">
                     {COLUMNS.map(col => {
                         const colTasks = tasks.filter(t => t.status === col.label);
                         return (
@@ -128,8 +99,8 @@ const [project, setProject] = useState<Project | null>(null);// New state to hol
                                     <button
                                         onClick={() => {
                                             setAddingTo(col.label);
-                                            setTitle('');
-                                            setDescription('');
+                                            setTitle("");
+                                            setDescription("");
                                         }}
                                         className="text-white/30 hover:text-white transition text-lg leading-none"
                                         title="Add task"
@@ -144,8 +115,8 @@ const [project, setProject] = useState<Project | null>(null);// New state to hol
                                         <TaskCard
                                             key={task._id}
                                             task={task}
-                                            onStatusChange={handleStatusChange}
-                                            onDelete={handleDeleteTask}
+                                            onStatusChange={updateTaskStatus}
+                                            onDelete={deleteTask}
                                         />
                                     ))}
 
@@ -177,7 +148,7 @@ const [project, setProject] = useState<Project | null>(null);// New state to hol
                                                     disabled={creating}
                                                     className="bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition"
                                                 >
-                                                    {creating ? 'Adding...' : 'Add'}
+                                                    {creating ? "Adding..." : "Add"}
                                                 </button>
                                                 <button
                                                     type="button"

@@ -1,16 +1,7 @@
-import { useState, useEffect, useRef, type MouseEvent } from "react";
+import { useState, useRef, type MouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../utils/api";
 import Navbar from "../components/Navbar";
-
-// Define the shape of a project object
-interface Project {
-    _id: string;
-    name: string;
-    description: string;
-    createdAt: string;
-    updatedAt: string;
-}
+import useProjects from "../hooks/useProjects";
 
 const TiltCard = ({ onClick, children }: { onClick: () => void; children: React.ReactNode }) => {
     const ref = useRef<HTMLDivElement>(null);
@@ -46,53 +37,22 @@ const TiltCard = ({ onClick, children }: { onClick: () => void; children: React.
 
 const DashboardPage = () => {
     const navigate = useNavigate(); // Get navigate function for redirection
-    const [projects, setProjects] = useState<Project[]>([]); // State to hold list of projects
-    const [loading, setLoading] = useState(true); //  State to track loading status of projects
-    const [error, setError] = useState(""); // State to hold any error messages
-    const [showForm, setShowForm] = useState(false); //  State to control visibility of new project form
-    const [name, setName] = useState(""); //    State to hold new project name input
+    const [showForm, setShowForm] = useState(false); // State to control visibility of new project form
+    const [name, setName] = useState(""); // State to hold new project name input
     const [description, setDescription] = useState(""); // State to hold new project description input
-    const [creating, setCreating] = useState(false); //  State to track loading status of project creation
+    const [creating, setCreating] = useState(false); // State to track loading status of project creation
 
-    //Fetch projects on load
-    useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                const { data } = await api.get("/projects"); // Call backend API to get projects
-                setProjects(data); // Store projects in state
-            } catch (err: any) {
-                setError("Failed to load projects"); // Show error message if API call fails
-            } finally {
-                setLoading(false); // Set loading to false once API call is complete
-            }
-        };
-
-        fetchProjects();
-    }, []);
+    // Pull all project state and actions from the custom hook
+    const { projects, loading, error, createProject, deleteProject } = useProjects();
 
     const handleCreateProject = async (e: React.FormEvent) => {
-        e.preventDefault(); // Prevent form from submitting normally
-        setError(""); // Clear any existing error messages
-        setCreating(true); // Set creating state to true to show loading indicator
-        try {
-            const { data } = await api.post("/projects", { name, description }); // Call backend API to create new project
-            setProjects([...projects, data]); // Add new project to existing list in state
-            setShowForm(false); // Hide the form after successful creation
-            setName(""); // Clear the name input field
-            setDescription(""); // Clear the description input field
-        } catch (err: any) {
-            setError("Failed to create project"); // Show error message if API call fails
-        } finally {
-            setCreating(false); // Set creating to false once API call is complete
-        }
-    };
-    const handleDeleteProject = async (projectId: string) => {
-        try {
-            await api.delete(`/projects/${projectId}`);
-            setProjects(projects.filter(p => p._id !== projectId));
-        } catch (err: any) {
-            setError("Failed to delete project");
-        }
+        e.preventDefault();
+        setCreating(true);
+        await createProject(name, description); // Delegate to hook — errors handled internally
+        setName("");
+        setDescription("");
+        setShowForm(false);
+        setCreating(false);
     };
 
 return (
@@ -102,8 +62,8 @@ return (
             {/* Main content */}
             <div className="max-w-5xl mx-auto px-6 py-10">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-8">
-                    <div>
+                <div className="relative flex items-center justify-center mb-8">
+                    <div className="text-center">
                         <h1 className="text-2xl font-bold">Your Projects</h1>
                         <p className="text-white/40 text-sm mt-1">
                             Manage and track all your work
@@ -111,7 +71,7 @@ return (
                     </div>
                     <button
                         onClick={() => setShowForm(!showForm)}
-                        className="bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold px-4 py-2 rounded-xl transition"
+                        className="absolute right-0 bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold px-4 py-2 rounded-xl transition"
                     >
                         + New Project
                     </button>
@@ -203,7 +163,7 @@ return (
                                     </svg>
                                 </div>
                                 <button
-                                    onClick={e => { e.stopPropagation(); handleDeleteProject(project._id); }}
+                                    onClick={e => { e.stopPropagation(); deleteProject(project._id); }}
                                     className="opacity-0 group-hover:opacity-100 text-white/20 hover:text-red-400 transition"
                                     title="Delete project"
                                 >
