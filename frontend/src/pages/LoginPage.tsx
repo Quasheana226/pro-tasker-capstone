@@ -35,7 +35,7 @@ const LoginPage = () => {
             <div className="absolute bottom-[-100px] right-1/4 w-[400px] h-[400px] bg-indigo-500 opacity-10 rounded-full blur-[100px] pointer-events-none" />
 
             {/* Glass card */}
-            <div className="relative w-full max-w-md bg-white/5 border border-white/10 backdrop-blur-xl rounded-2xl p-6 shadow-2xl">
+            <div className="relative w-full max-w-md bg-white/5 backdrop-blur-xl rounded-2xl p-6 shadow-2xl">
                 {/* Logo / Brand */}
                 <div className="mb-5 text-center">
                     <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-violet-600 mb-3">

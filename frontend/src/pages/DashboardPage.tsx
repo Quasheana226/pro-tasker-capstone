@@ -81,7 +81,7 @@ return (
                 {showForm && (
                     <form
                         onSubmit={handleCreateProject}
-                        className="mb-8 bg-white/5 border border-white/10 rounded-2xl p-6 space-y-4"
+                        className="mb-8 bg-white/5 rounded-2xl p-6 space-y-4"
                     >
                         <h2 className="font-semibold text-white">New Project</h2>
                         <input

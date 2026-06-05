@@ -118,13 +118,15 @@ const LandingPage = () => {
                     </p>
 
                     {/* CTAs */}
-                    <div className="flex flex-col items-start gap-3 mt-14">
-                        <button
-                            onClick={() => navigate("/register")}
-                            className="bg-violet-600 hover:bg-violet-500 text-white font-semibold px-6 py-3 rounded-xl transition text-sm"
-                        >
-                            Get started free
-                        </button>
+                    <div className="mt-14">
+                        <div className="flex justify-center mb-3">
+                            <button
+                                onClick={() => navigate("/register")}
+                                className="bg-violet-600 hover:bg-violet-500 text-white font-semibold px-6 py-3 rounded-xl transition text-sm"
+                            >
+                                Get started free
+                            </button>
+                        </div>
                         <button
                             onClick={() => navigate("/login")}
                             className="text-sm text-white/40 hover:text-white transition"
