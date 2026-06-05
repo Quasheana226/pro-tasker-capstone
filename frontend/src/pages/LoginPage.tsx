@@ -37,15 +37,15 @@ const LoginPage = () => {
             {/* Glass card */}
             <div className="relative w-full max-w-md bg-white/5 backdrop-blur-xl rounded-2xl p-6 shadow-2xl">
                 {/* Logo / Brand */}
-                <div className="mb-5">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-violet-600 mb-3">
+                <div className="mb-5 text-center">
+                    <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-violet-600 mb-3">
                         <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                         </svg>
                     </div>
-                    <h1 className="text-2xl font-bold text-white text-left">Welcome back 👋</h1>
-                    <p className="text-sm text-white/40 mt-1 text-left">Sign in to your Forge account</p>
+                    <p className="text-sm text-white/40">Sign in to your Forge account</p>
                 </div>
+                <h1 className="text-2xl font-bold text-white mb-5">Welcome back 👋</h1>
                 {/* Error message */}
                 {error && (
                     <div className="mb-4 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
