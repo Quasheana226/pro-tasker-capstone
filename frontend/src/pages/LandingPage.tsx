@@ -99,12 +99,6 @@ const LandingPage = () => {
 
                 {/* Left: copy */}
                 <div className="flex-1 min-w-0">
-                    {/* Badge */}
-                    <div className="inline-flex items-center gap-2 bg-violet-600/10 border border-violet-500/20 rounded-full px-3 py-1 text-xs text-violet-300 mb-8">
-                        <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
-                        Project management, simplified
-                    </div>
-
                     {/* Headline */}
                     <h1 className="text-5xl sm:text-6xl lg:text-7xl leading-[1.05] font-light mb-6">
                         manage{" "}
@@ -124,7 +118,7 @@ const LandingPage = () => {
                     </p>
 
                     {/* CTAs */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col items-start gap-3 mt-14">
                         <button
                             onClick={() => navigate("/register")}
                             className="bg-violet-600 hover:bg-violet-500 text-white font-semibold px-6 py-3 rounded-xl transition text-sm"
@@ -159,7 +153,7 @@ const LandingPage = () => {
                         { icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z", label: "Free to use" },
                         { icon: "M13 10V3L4 14h7v7l9-11h-7z", label: "Instant setup" },
                         { icon: "M4 6h16M4 10h16M4 14h16M4 18h16", label: "Visual kanban boards" },
-                        { icon: "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197", label: "Team-ready" },
+                        { icon: "M17 20h5v-2a4 4 0 00-5.916-3.5M9 20H4v-2a4 4 0 015.916-3.5M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z", label: "Team-ready" },
                     ].map(({ icon, label }) => (
                         <div key={label} className="flex items-center gap-2">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
