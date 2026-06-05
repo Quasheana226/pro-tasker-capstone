@@ -17,7 +17,7 @@ const Navbar = ({ title, subtitle, showBack = false }: NavbarProps) => {
     };
 
     return (
-        <nav className="border-b border-white/10 px-6 py-4 flex items-center justify-between shrink-0 relative">
+        <nav className="sticky top-0 z-50 border-b border-white/10 px-6 py-4 flex items-center justify-between shrink-0 relative bg-[#0f0f13]/90 backdrop-blur-md">
             {/* Left: logo */}
             <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center">
