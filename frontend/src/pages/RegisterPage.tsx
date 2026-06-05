@@ -44,7 +44,7 @@ const RegisterPage = () => {
                     </div>
                     <p className="text-sm text-white/40">Start organizing with Forge</p>
                 </div>
-                <h1 className="text-2xl font-bold text-white mb-5">Create an account</h1>
+                <h1 className="text-2xl font-bold text-white mb-5 text-center">Create an account</h1>
 
                 {/* Error message — only renders if error state is not empty */}
                 {error && (

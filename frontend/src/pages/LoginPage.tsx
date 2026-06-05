@@ -45,7 +45,7 @@ const LoginPage = () => {
                     </div>
                     <p className="text-sm text-white/40">Sign in to your Forge account</p>
                 </div>
-                <h1 className="text-2xl font-bold text-white mb-5">Welcome back 👋</h1>
+                <h1 className="text-2xl font-bold text-white mb-5 text-center">Welcome back 👋</h1>
                 {/* Error message */}
                 {error && (
                     <div className="mb-4 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
