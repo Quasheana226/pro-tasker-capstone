@@ -4,8 +4,7 @@ A modern, full-stack project management application built with the MERN stack. F
 
 ## Live Demo
 
-- Frontend: https://forge-frontend-3tez.onrender.com
-- Backend: https://forge-backend-y3xx.onrender.com
+https://forge-frontend-3tez.onrender.com/
 
 ## Tech Stack
 
