@@ -42,8 +42,8 @@ const RegisterPage = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                         </svg>
                     </div>
-                    <h1 className="text-2xl font-bold text-white">Create an account</h1>
-                    <p className="text-sm text-white/40 mt-1">Start organizing with </p>
+                    <h1 className="text-2xl font-bold text-white text-left">Create an account</h1>
+                    <p className="text-sm text-white/40 mt-1 text-left">Start organizing with Forge</p>
                 </div>
 
                 {/* Error message — only renders if error state is not empty */}
